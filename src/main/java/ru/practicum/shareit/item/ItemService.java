@@ -19,38 +19,32 @@ public class ItemService {
     private final UserRepository userRepository;
 
     public ItemDto createItem(int userId, ItemDto itemDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
+        User user = getUserOtherThrow(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
         int itemId = itemRepository.add(item);
-        return ItemMapper.toItemDto(itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException(String.format("item id N%s", itemId))));
+        return getItemDtoOtherThrow(itemId);
     }
 
     public ItemDto getItemById(int userId, int id) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
-        return ItemMapper.toItemDto(itemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("item id N%s", id))));
+        getUserOtherThrow(userId);
+        return getItemDtoOtherThrow(id);
     }
 
     public List<ItemDto> getAllItemsUser(int userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
-        return itemRepository.findAll().filter(i -> user.equals(i.getOwner()))
+        User user = getUserOtherThrow(userId);
+        return itemRepository.findAll()
+                .filter(i -> user.equals(i.getOwner()))
                 .map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     public void delete(int userId, int id) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
+        getUserOtherThrow(userId);
         itemRepository.delete(id);
     }
 
     public ItemDto change(int userId, int id, ItemDto itemDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
+        User user = getUserOtherThrow(userId);
         Item itemInDb = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
         if (!user.equals(itemInDb.getOwner())) {
@@ -68,19 +62,28 @@ public class ItemService {
 
         itemRepository.overwrite(id, itemInDb);
 
-        return ItemMapper.toItemDto(itemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("item id N%s", id))));
+        return getItemDtoOtherThrow(id);
     }
 
     public List<ItemDto> searchByText(int userId, String text) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
-        if (text != null && !text.isBlank()) {
-            return itemRepository.findAll().filter(item -> isTextContained(text, item))
-                    .map(ItemMapper::toItemDto).collect(Collectors.toList());
-        } else {
+        getUserOtherThrow(userId);
+        if (text == null || text.isBlank()) {
             return List.of();
         }
+        return itemRepository.findAll()
+                .filter(item -> isTextContained(text, item))
+                .map(ItemMapper::toItemDto).collect(Collectors.toList());
+    }
+
+    private User getUserOtherThrow(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
+    }
+
+    private ItemDto getItemDtoOtherThrow(int id) {
+        return itemRepository.findById(id)
+                .map(ItemMapper::toItemDto)
+                .orElseThrow(() -> new NotFoundException(String.format("item id N%s", id)));
     }
 
     private boolean isTextContained(String text, Item item) {

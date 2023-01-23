@@ -19,7 +19,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDuplicateEmailException(final DuplicateEmailException e) {
+    public ErrorResponse handleConflictException(final ConflictException e) {
         log.error("incorrect email", e);
         return new ErrorResponse(String.format("incorrect email %s", e.getMessage()));
     }

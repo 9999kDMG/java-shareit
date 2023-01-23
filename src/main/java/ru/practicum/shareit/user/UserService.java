@@ -2,7 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.DuplicateEmailException;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -16,7 +16,7 @@ public class UserService {
     public User create(User user) {
         userRepository.findByEmail(user.getEmail())
                 .ifPresent(p -> {
-                    throw new DuplicateEmailException(String.format("email %s", p.getEmail()));
+                    throw new ConflictException(String.format("email %s", p.getEmail()));
                 });
         int idInDB = userRepository.add(user);
         return userRepository.findById(idInDB)
@@ -37,7 +37,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException(String.format("user id N%s", id)));
         userRepository.findByEmail(user.getEmail())
                 .ifPresent(p -> {
-                    throw new DuplicateEmailException(String.format("email %s", p.getEmail()));
+                    throw new ConflictException(String.format("email %s", p.getEmail()));
                 });
         if (user.getName() != null) {
             userInDb.setName(user.getName());
