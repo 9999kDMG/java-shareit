@@ -11,20 +11,20 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "comments")
+@Table(name = "COMMENTS")
 @Builder
 @AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "COMMENT_ID")
     private Integer id;
     private String text;
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "ITEM_ID")
     private Item item;
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "AUTHOR_ID")
     private User author;
     private LocalDateTime created;
 }

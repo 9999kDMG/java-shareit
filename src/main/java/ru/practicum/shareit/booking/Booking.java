@@ -17,24 +17,24 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "bookings")
+@Table(name = "BOOKINGS")
 public class Booking {
     @Id
-    @Column(name = "booking_id")
+    @Column(name = "BOOKING_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "start_time")
+    @Column(name = "START_TIME")
     private LocalDateTime start;
 
-    @Column(name = "end_time")
+    @Column(name = "END_TIME")
     private LocalDateTime end;
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "ITEM_ID")
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "BOOKER_ID")
     private User booker;
 
     @Enumerated(EnumType.STRING)

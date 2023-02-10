@@ -16,23 +16,26 @@ import javax.persistence.*;
 @Setter
 @EqualsAndHashCode
 @Entity
-@Table(name = "items")
+@Table(name = "ITEMS")
 public class Item {
     @Id
+    @Column(name = "ITEM_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
     private Integer id;
 
+    @Column(name = "NAME")
     private String name;
 
+    @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "AVAILABLE")
     private Boolean available;
 
     @Transient
     private ItemRequest request;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "OWNER_ID")
     private User owner;
 }

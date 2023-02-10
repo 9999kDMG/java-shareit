@@ -17,11 +17,11 @@ import javax.validation.constraints.Size;
 @Setter
 @EqualsAndHashCode
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class User {
     @Id
+    @Column(name = "USER_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Integer id;
 
     @NotNull
