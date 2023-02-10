@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.*;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,10 +12,16 @@ import javax.validation.constraints.Size;
  */
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Integer id;
 
     @NotNull
@@ -22,5 +29,6 @@ public class User {
     private String name;
     @NotNull
     @Email
+    @Column(unique = true)
     private String email;
 }
