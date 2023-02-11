@@ -3,9 +3,8 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.exception.FieldValidationException;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.UnsupportedStatusException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
@@ -32,7 +31,7 @@ public class BookingService {
         }
 
         if (!item.getAvailable()) {
-            throw new FieldValidationException(String.format("Item with item id N%s is unavailable", bookingDto.getItemId()));
+            throw new BadRequestException(String.format("Item with item id N%s is unavailable", bookingDto.getItemId()));
         }
 
         Booking booking = BookingMapper.toBooking(bookingDto);
@@ -40,7 +39,7 @@ public class BookingService {
         if (booking.getStart().isBefore(LocalDateTime.now())
                 || booking.getEnd().isBefore(booking.getStart())
                 || booking.getEnd().isBefore(LocalDateTime.now())) {
-            throw new FieldValidationException(String.format("incorrect booking date item id N%s", bookingDto.getItemId()));
+            throw new BadRequestException(String.format("incorrect booking date item id N%s", bookingDto.getItemId()));
         }
 
         booking.setBooker(booker);
@@ -60,7 +59,7 @@ public class BookingService {
         }
 
         if (booking.getStatus() == BookingStatus.APPROVED || booking.getStatus() == BookingStatus.REJECTED) {
-            throw new FieldValidationException(String.format("booking id N%s already has a changed status", id));
+            throw new BadRequestException(String.format("booking id N%s already has a changed status", id));
         }
 
         BookingStatus newStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
@@ -81,7 +80,6 @@ public class BookingService {
         return booking;
     }
 
-
     public List<Booking> getBookingsByBooker(int userId, String state) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
@@ -100,7 +98,7 @@ public class BookingService {
             case "REJECTED":
                 return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
             default:
-                throw new UnsupportedStatusException();
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 
@@ -122,7 +120,7 @@ public class BookingService {
             case "REJECTED":
                 return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
             default:
-                throw new UnsupportedStatusException();
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 }

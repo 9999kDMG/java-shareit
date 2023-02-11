@@ -6,7 +6,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.PartBookingDto;
-import ru.practicum.shareit.exception.FieldValidationException;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.CommentDto;
@@ -118,6 +118,25 @@ public class ItemService {
                 .map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
+    public CommentDto writeComment(int userId, int itemId, CommentDto commentDto) {
+        getUserOtherThrow(userId);
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException(String.format("item id N%s", itemId)));
+        List<Booking> bookings = bookingRepository
+                .findAllByItemIdAndBookerIdAndEndBeforeOrderByStartDesc(item.getId(), userId, LocalDateTime.now());
+        if (bookings.isEmpty()) {
+            throw new BadRequestException(String.format("the user id N%s did not book the item", userId));
+        }
+        Comment comment = Comment.builder()
+                .author(getUserOtherThrow(userId))
+                .item(item)
+                .text(commentDto.getText())
+                .created(LocalDateTime.now())
+                .build();
+
+        return CommentMapper.toCommentDto(commentRepository.save(comment));
+    }
+
     private User getUserOtherThrow(int userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("user id N%s", userId)));
@@ -133,24 +152,5 @@ public class ItemService {
         return bookings.stream()
                 .filter(booking -> booking.getEnd().isAfter(LocalDateTime.now()))
                 .reduce((first, second) -> first);
-    }
-
-    public CommentDto writeComment(int userId, int itemId, CommentDto commentDto) {
-        getUserOtherThrow(userId);
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException(String.format("item id N%s", itemId)));
-        List<Booking> bookings = bookingRepository
-                .findAllByItemIdAndBookerIdAndEndBeforeOrderByStartDesc(item.getId(), userId, LocalDateTime.now());
-        if (bookings.isEmpty()) {
-            throw new FieldValidationException(String.format("the user id N%s did not book the item", userId));
-        }
-        Comment comment = Comment.builder()
-                .author(getUserOtherThrow(userId))
-                .item(item)
-                .text(commentDto.getText())
-                .created(LocalDateTime.now())
-                .build();
-
-        return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 }

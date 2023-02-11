@@ -14,7 +14,6 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User create(User user) {
-        //throwIfEmailExist(user.getEmail());
         return userRepository.save(user);
     }
 

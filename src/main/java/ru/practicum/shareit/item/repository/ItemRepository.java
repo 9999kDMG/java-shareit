@@ -9,10 +9,10 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findAllByOwnerId(int id);
 
-    @Query("select i " +
-            "from Item i " +
-            "where (lower(i.name) like lower(concat('%', ?1, '%')) " +
-            "or lower(i.description) like lower(concat('%', ?1, '%')) ) " +
-            "and i.available is true")
+    @Query("SELECT i " +
+            "FROM Item i " +
+            "WHERE (LOWER(i.name) LIKE LOWER(CONCAT('%', ?1, '%')) " +
+            "OR LOWER(i.description) LIKE LOWER(CONCAT('%', ?1, '%')) ) " +
+            "AND i.available IS TRUE")
     List<Item> findAllByText(String text);
 }

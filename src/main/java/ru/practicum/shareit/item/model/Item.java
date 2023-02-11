@@ -9,33 +9,37 @@ import javax.persistence.*;
 /**
  * TODO Sprint add-controllers.
  */
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+
+@Builder
+
 @Getter
 @Setter
+
 @EqualsAndHashCode
+
 @Entity
-@Table(name = "ITEMS")
+@Table(name = "items")
 public class Item {
     @Id
-    @Column(name = "ITEM_ID")
+    @Column(name = "item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "NAME")
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description", length = 200)
     private String description;
 
-    @Column(name = "AVAILABLE")
+    @Column(name = "available", nullable = false)
     private Boolean available;
 
     @Transient
     private ItemRequest request;
 
     @ManyToOne
-    @JoinColumn(name = "OWNER_ID")
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 }

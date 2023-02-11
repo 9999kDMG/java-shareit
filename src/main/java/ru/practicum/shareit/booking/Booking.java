@@ -13,30 +13,35 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
+
 @EqualsAndHashCode
+
 @Getter
 @Setter
+
 @Entity
-@Table(name = "BOOKINGS")
+@Table(name = "bookings")
 public class Booking {
     @Id
-    @Column(name = "BOOKING_ID")
+    @Column(name = "booking_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "START_TIME")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime start;
 
-    @Column(name = "END_TIME")
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime end;
+
     @ManyToOne
-    @JoinColumn(name = "ITEM_ID")
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "BOOKER_ID")
+    @JoinColumn(name = "booker_id", nullable = false)
     private User booker;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private BookingStatus status;
 }
