@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.model.ErrorResponse;
 
 @Slf4j
-@RestControllerAdvice("ru.yandex.practicum.shareit")
+@RestControllerAdvice("ru.practicum.shareit")
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -22,5 +22,12 @@ public class ErrorHandler {
     public ErrorResponse handleConflictException(final ConflictException e) {
         log.error("incorrect email", e);
         return new ErrorResponse(String.format("incorrect email %s", e.getMessage()));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse fieldValidationExceptionHandler(BadRequestException e) {
+        log.error("Unsupported status of booking", e);
+        return new ErrorResponse(e.getMessage());
     }
 }

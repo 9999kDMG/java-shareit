@@ -14,13 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User create(User user) {
-        userRepository.findByEmail(user.getEmail())
-                .ifPresent(p -> {
-                    throw new ConflictException(String.format("email %s", p.getEmail()));
-                });
-        int idInDB = userRepository.add(user);
-        return userRepository.findById(idInDB)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", idInDB)));
+        return userRepository.save(user);
     }
 
     public User getUserById(int userId) {
@@ -35,22 +29,26 @@ public class UserService {
     public User change(int id, User user) {
         User userInDb = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("user id N%s", id)));
-        userRepository.findByEmail(user.getEmail())
-                .ifPresent(p -> {
-                    throw new ConflictException(String.format("email %s", p.getEmail()));
-                });
+        throwIfEmailExist(user.getEmail());
+
         if (user.getName() != null) {
             userInDb.setName(user.getName());
         }
         if (user.getEmail() != null) {
             userInDb.setEmail(user.getEmail());
         }
-        userRepository.overwrite(id, userInDb);
-        return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("user id N%s", id)));
+
+        return userRepository.save(userInDb);
     }
 
     public void delete(int id) {
-        userRepository.delete(id);
+        userRepository.deleteById(id);
+    }
+
+    private void throwIfEmailExist(String email) {
+        userRepository.findByEmail(email)
+                .ifPresent(p -> {
+                    throw new ConflictException(String.format("email %s", p.getEmail()));
+                });
     }
 }
