@@ -14,10 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.UtilsForTest;
-import ru.practicum.shareit.exception.ErrorHandler;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exception.ErrorHandler;
+import ru.practicum.shareit.item.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;

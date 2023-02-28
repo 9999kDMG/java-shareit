@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.UtilsForTest;
-import ru.practicum.shareit.exception.ConflictException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.exception.ConflictException;
+import ru.practicum.shareit.item.exception.NotFoundException;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;

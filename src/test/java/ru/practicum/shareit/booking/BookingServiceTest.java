@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.UtilsForTest;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.item.exception.BadRequestException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequest;
@@ -116,6 +116,4 @@ public class BookingServiceTest {
         when(bookingRepository.findById(anyInt())).thenReturn(Optional.of(booking));
         Assertions.assertThatThrownBy(() -> bookingService.change(1, 1, true)).isInstanceOf(BadRequestException.class);
     }
-
-
 }
