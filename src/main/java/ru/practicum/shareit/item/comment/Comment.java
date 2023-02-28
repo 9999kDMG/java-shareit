@@ -5,7 +5,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -13,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 
 @Builder
 
@@ -24,7 +24,6 @@ public class Comment {
     @Column(name = "comment_id")
     private Integer id;
 
-    @Size(max = 1000)
     @Column(name = "text", nullable = false, length = 1000)
     private String text;
 

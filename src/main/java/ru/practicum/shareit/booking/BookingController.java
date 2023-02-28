@@ -1,8 +1,11 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.exception.BadRequestException;
 
 import java.util.List;
 
@@ -33,12 +36,29 @@ public class BookingController {
     }
 
     @GetMapping()
-    public List<Booking> getBookingsByBooker(@RequestHeader(userIdHeader) int userId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        return bookingService.getBookingsByBooker(userId, state);
+    public List<Booking> getBookingsByBooker(@RequestHeader(userIdHeader) int userId,
+                                             @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                             @RequestParam(name = "from", required = false) Integer from,
+                                             @RequestParam(name = "size", required = false) Integer size) {
+        return bookingService.getBookingsByBooker(userId, state, getPageOrThrow(from, size));
     }
 
     @GetMapping("/owner")
-    public List<Booking> getBookingsByOwner(@RequestHeader(userIdHeader) int userId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        return bookingService.getBookingsByOwner(userId, state);
+    public List<Booking> getBookingsByOwner(@RequestHeader(userIdHeader) int userId,
+                                            @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                            @RequestParam(name = "from", required = false) Integer from,
+                                            @RequestParam(name = "size", required = false) Integer size) {
+        return bookingService.getBookingsByOwner(userId, state, getPageOrThrow(from, size));
+    }
+
+    private Pageable getPageOrThrow(Integer from, Integer size) {
+        if (size == null || from == null) {
+            return Pageable.unpaged();
+        }
+        if (size <= 0 || from < 0) {
+            throw new BadRequestException("incorrect page parameters");
+        }
+        from = from / size;
+        return PageRequest.of(from, size);
     }
 }

@@ -1,7 +1,10 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -30,13 +33,18 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader(userIdHeader) int userId) {
-        return itemService.getAllItemsUser(userId);
+    public List<ItemDto> getAll(@RequestHeader(userIdHeader) int userId,
+                                @RequestParam(name = "from", required = false) Integer from,
+                                @RequestParam(name = "size", required = false) Integer size) {
+        return itemService.getAllItemsUser(userId, getPageOrThrow(from, size));
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestHeader(userIdHeader) int userId, @RequestParam String text) {
-        return itemService.searchByText(userId, text);
+    public List<ItemDto> search(@RequestHeader(userIdHeader) int userId,
+                                @RequestParam String text,
+                                @RequestParam(name = "from", required = false) Integer from,
+                                @RequestParam(name = "size", required = false) Integer size) {
+        return itemService.searchByText(userId, text, getPageOrThrow(from, size));
     }
 
     @PatchMapping("/{id}")
@@ -53,5 +61,15 @@ public class ItemController {
     public CommentDto postComment(@RequestHeader(userIdHeader) int userId,
                                   @PathVariable int itemId, @RequestBody @Valid CommentDto commentDto) {
         return itemService.writeComment(userId, itemId, commentDto);
+    }
+
+    private Pageable getPageOrThrow(Integer from, Integer size) {
+        if (size == null || from == null) {
+            return Pageable.unpaged();
+        }
+        if (size <= 0 || from < 0) {
+            throw new BadRequestException("incorrect page parameters");
+        }
+        return PageRequest.of(from, size);
     }
 }
