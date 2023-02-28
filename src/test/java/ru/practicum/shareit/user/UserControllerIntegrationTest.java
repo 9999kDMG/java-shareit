@@ -68,4 +68,5 @@ public class UserControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUser)))
                 .andExpect(status().isConflict());
-    }}
+    }
+}
