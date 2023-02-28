@@ -22,7 +22,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +42,7 @@ public class BookingServiceTest {
     private BookingDto bookingDto;
     @InjectMocks
     BookingService bookingService;
+
     @BeforeEach
     void createEntityForTest() {
         user = UtilsForTest.makeUser(1);
@@ -78,6 +80,7 @@ public class BookingServiceTest {
         Assertions.assertThat(bookingService.getBookingsByOwner(1, "ALL", Pageable.unpaged()))
                 .isEqualTo(List.of(booking));
     }
+
     @Test
     void shouldGetBookingsByOwnerStatusCurrent() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
@@ -130,6 +133,7 @@ public class BookingServiceTest {
         Assertions.assertThat(bookingService.getBookingsByOwner(1, "WAITING", Pageable.unpaged()))
                 .isEqualTo(List.of(booking));
     }
+
     @Test
     void shouldGetBookingsByOwnerStatusRejected() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
@@ -142,6 +146,7 @@ public class BookingServiceTest {
         Assertions.assertThat(bookingService.getBookingsByOwner(1, "REJECTED", Pageable.unpaged()))
                 .isEqualTo(List.of(booking));
     }
+
     @Test
     void shouldThrowBadRequestExceptionByUnknownStatusBookingOfOwner() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
@@ -212,6 +217,7 @@ public class BookingServiceTest {
         Assertions.assertThat(bookingService.getBookingsByBooker(1, "WAITING", Pageable.unpaged()))
                 .isEqualTo(List.of(booking));
     }
+
     @Test
     void shouldGetBookingsByBookerStatusRejected() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
@@ -224,11 +230,12 @@ public class BookingServiceTest {
         Assertions.assertThat(bookingService.getBookingsByBooker(1, "REJECTED", Pageable.unpaged()))
                 .isEqualTo(List.of(booking));
     }
+
     @Test
     void shouldThrowBadRequestExceptionByUnknownStatus() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         Assertions.assertThatThrownBy(
-                () -> bookingService.getBookingsByBooker(1, "popopo", Pageable.unpaged()))
+                        () -> bookingService.getBookingsByBooker(1, "popopo", Pageable.unpaged()))
                 .isInstanceOf(BadRequestException.class
                 );
     }
