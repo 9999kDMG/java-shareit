@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 
 @Entity
-@Table(name = "item_requests")
+@Table(name = "item_request")
 public class ItemRequest {
     @Id
     @Column(name = "item_request_id")
