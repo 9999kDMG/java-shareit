@@ -46,6 +46,7 @@ public class BookingService {
         booking.setBooker(booker);
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING);
+
         return bookingRepository.save(booking);
     }
 
@@ -65,6 +66,7 @@ public class BookingService {
 
         BookingStatus newStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
         booking.setStatus(newStatus);
+
         return bookingRepository.save(booking);
     }
 
@@ -78,6 +80,7 @@ public class BookingService {
         if (!(booking.getBooker().equals(user) || booking.getItem().getOwner().equals(user))) {
             throw new NotFoundException(String.format("there is no booking for user id N%s", userId));
         }
+
         return booking;
     }
 

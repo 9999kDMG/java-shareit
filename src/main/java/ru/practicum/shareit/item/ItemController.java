@@ -1,15 +1,14 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.exception.BadRequestException;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static ru.practicum.shareit.utils.Pagination.getPageOrThrow;
 
 /**
  * TODO Sprint add-controllers.
@@ -61,15 +60,5 @@ public class ItemController {
     public CommentDto postComment(@RequestHeader(userIdHeader) int userId,
                                   @PathVariable int itemId, @RequestBody @Valid CommentDto commentDto) {
         return itemService.writeComment(userId, itemId, commentDto);
-    }
-
-    private Pageable getPageOrThrow(Integer from, Integer size) {
-        if (size == null || from == null) {
-            return Pageable.unpaged();
-        }
-        if (size <= 0 || from < 0) {
-            throw new BadRequestException("incorrect page parameters");
-        }
-        return PageRequest.of(from, size);
     }
 }

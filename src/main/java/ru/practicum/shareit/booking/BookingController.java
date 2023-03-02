@@ -1,13 +1,12 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.item.exception.BadRequestException;
 
 import java.util.List;
+
+import static ru.practicum.shareit.utils.Pagination.getPageOrThrow;
 
 /**
  * TODO Sprint add-bookings.
@@ -49,16 +48,5 @@ public class BookingController {
                                             @RequestParam(name = "from", required = false) Integer from,
                                             @RequestParam(name = "size", required = false) Integer size) {
         return bookingService.getBookingsByOwner(userId, state, getPageOrThrow(from, size));
-    }
-
-    private Pageable getPageOrThrow(Integer from, Integer size) {
-        if (size == null || from == null) {
-            return Pageable.unpaged();
-        }
-        if (size <= 0 || from < 0) {
-            throw new BadRequestException("incorrect page parameters");
-        }
-        from = from / size;
-        return PageRequest.of(from, size);
     }
 }

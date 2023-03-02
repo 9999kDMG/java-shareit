@@ -29,7 +29,10 @@ public class ItemRequestService {
         User user = userService.getUserById(userId);
         ItemRequest itemRequest = ItemRequestMapper.toItemRequest(itemRequestDto);
         itemRequest.setUser(user);
-        return ItemRequestMapper.toItemRequestDto(itemRequestRepository.save(itemRequest));
+
+        ItemRequest savesRequest = itemRequestRepository.save(itemRequest);
+
+        return ItemRequestMapper.toItemRequestDto(savesRequest);
     }
 
     public List<ItemRequestDto> getAllByUser(int userId) {
@@ -89,6 +92,7 @@ public class ItemRequestService {
                 .orElseThrow(() -> new NotFoundException(String.format("Request id N%s", requestId)));
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setItems(itemDtos);
+
         return itemRequestDto;
     }
 

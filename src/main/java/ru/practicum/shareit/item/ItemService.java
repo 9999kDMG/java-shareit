@@ -7,13 +7,13 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.PartBookingDto;
-import ru.practicum.shareit.item.exception.BadRequestException;
-import ru.practicum.shareit.item.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exception.BadRequestException;
+import ru.practicum.shareit.item.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequest;
@@ -44,6 +44,7 @@ public class ItemService {
                     .orElseThrow(() -> new NotFoundException(String.format("Request id N%s", itemDto.getRequestId())));
             item.setRequest(itemRequest);
         }
+
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
@@ -65,6 +66,7 @@ public class ItemService {
                 .stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList()));
+
         return itemDto;
     }
 
@@ -120,6 +122,7 @@ public class ItemService {
         if (text == null || text.isBlank()) {
             return List.of();
         }
+
         return itemRepository.findAllByText(text, page)
                 .stream()
                 .map(ItemMapper::toItemDto).collect(Collectors.toList());
