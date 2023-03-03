@@ -8,6 +8,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.practicum.shareit.utils.Pagination.getPageOrThrow;
+
 /**
  * TODO Sprint add-controllers.
  */
@@ -30,13 +32,18 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader(userIdHeader) int userId) {
-        return itemService.getAllItemsUser(userId);
+    public List<ItemDto> getAll(@RequestHeader(userIdHeader) int userId,
+                                @RequestParam(name = "from", required = false) Integer from,
+                                @RequestParam(name = "size", required = false) Integer size) {
+        return itemService.getAllItemsUser(userId, getPageOrThrow(from, size));
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestHeader(userIdHeader) int userId, @RequestParam String text) {
-        return itemService.searchByText(userId, text);
+    public List<ItemDto> search(@RequestHeader(userIdHeader) int userId,
+                                @RequestParam String text,
+                                @RequestParam(name = "from", required = false) Integer from,
+                                @RequestParam(name = "size", required = false) Integer size) {
+        return itemService.searchByText(userId, text, getPageOrThrow(from, size));
     }
 
     @PatchMapping("/{id}")

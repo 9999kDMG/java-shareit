@@ -6,6 +6,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 
 import java.util.List;
 
+import static ru.practicum.shareit.utils.Pagination.getPageOrThrow;
+
 /**
  * TODO Sprint add-bookings.
  */
@@ -33,12 +35,18 @@ public class BookingController {
     }
 
     @GetMapping()
-    public List<Booking> getBookingsByBooker(@RequestHeader(userIdHeader) int userId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        return bookingService.getBookingsByBooker(userId, state);
+    public List<Booking> getBookingsByBooker(@RequestHeader(userIdHeader) int userId,
+                                             @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                             @RequestParam(name = "from", required = false) Integer from,
+                                             @RequestParam(name = "size", required = false) Integer size) {
+        return bookingService.getBookingsByBooker(userId, state, getPageOrThrow(from, size));
     }
 
     @GetMapping("/owner")
-    public List<Booking> getBookingsByOwner(@RequestHeader(userIdHeader) int userId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        return bookingService.getBookingsByOwner(userId, state);
+    public List<Booking> getBookingsByOwner(@RequestHeader(userIdHeader) int userId,
+                                            @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                            @RequestParam(name = "from", required = false) Integer from,
+                                            @RequestParam(name = "size", required = false) Integer size) {
+        return bookingService.getBookingsByOwner(userId, state, getPageOrThrow(from, size));
     }
 }

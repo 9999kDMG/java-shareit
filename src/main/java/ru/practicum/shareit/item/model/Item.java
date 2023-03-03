@@ -36,7 +36,8 @@ public class Item {
     @Column(name = "available", nullable = false)
     private Boolean available;
 
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "request_id")
     private ItemRequest request;
 
     @ManyToOne

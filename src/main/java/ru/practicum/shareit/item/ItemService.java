@@ -1,20 +1,23 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.PartBookingDto;
-import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exception.BadRequestException;
+import ru.practicum.shareit.item.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -30,11 +33,18 @@ public class ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     public ItemDto createItem(int userId, ItemDto itemDto) {
         User user = getUserOtherThrow(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
+        if (itemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException(String.format("Request id N%s", itemDto.getRequestId())));
+            item.setRequest(itemRequest);
+        }
+
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
@@ -56,14 +66,13 @@ public class ItemService {
                 .stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList()));
+
         return itemDto;
     }
 
-    public List<ItemDto> getAllItemsUser(int userId) {
+    public List<ItemDto> getAllItemsUser(int userId, Pageable page) {
         getUserOtherThrow(userId);
-
-        return itemRepository.findAllByOwnerId(userId)
-                .stream()
+        return itemRepository.findAllByOwnerId(userId, page).stream()
                 .map((item) -> {
                     ItemDto itemDto = ItemMapper.toItemDto(item);
                     List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStart(item.getId());
@@ -108,12 +117,13 @@ public class ItemService {
         return ItemMapper.toItemDto(itemRepository.save(itemInDb));
     }
 
-    public List<ItemDto> searchByText(int userId, String text) {
+    public List<ItemDto> searchByText(int userId, String text, Pageable page) {
         getUserOtherThrow(userId);
         if (text == null || text.isBlank()) {
             return List.of();
         }
-        return itemRepository.findAllByText(text)
+
+        return itemRepository.findAllByText(text, page)
                 .stream()
                 .map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
