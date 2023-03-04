@@ -7,13 +7,13 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.PartBookingDto;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequest;
@@ -72,7 +72,7 @@ public class ItemService {
 
     public List<ItemDto> getAllItemsUser(int userId, Pageable page) {
         getUserOtherThrow(userId);
-        return itemRepository.findAllByOwnerId(userId, page).stream()
+        return itemRepository.findAllByOwnerIdOrderById(userId, page).stream()
                 .map((item) -> {
                     ItemDto itemDto = ItemMapper.toItemDto(item);
                     List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStart(item.getId());

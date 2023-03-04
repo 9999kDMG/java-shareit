@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
-    List<Item> findAllByOwnerId(int id, Pageable page);
+    List<Item> findAllByOwnerIdOrderById(int id, Pageable page);
 
     @Query("SELECT i " +
             "FROM Item i " +

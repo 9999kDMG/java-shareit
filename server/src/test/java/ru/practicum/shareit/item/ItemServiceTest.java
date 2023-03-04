@@ -113,7 +113,7 @@ public class ItemServiceTest {
         ItemRequest itemRequest = UtilsForTest.makeItemRequest(1, user);
         Item item1 = UtilsForTest.makeItem(1, true, user, itemRequest);
         Item item2 = UtilsForTest.makeItem(2, true, user, itemRequest);
-        List<Item> items = List.of(item1,item2);
+        List<Item> items = List.of(item1, item2);
 
         Booking booking = UtilsForTest.makeBooking(1, item1, user, BookingStatus.APPROVED);
         Comment comment = UtilsForTest.makeComment(1, item1, user);
@@ -129,7 +129,7 @@ public class ItemServiceTest {
         itemDto2.setComments(List.of(CommentMapper.toCommentDto(comment)));
 
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
-        when(itemRepository.findAllByOwnerId(anyInt(), any(Pageable.class))).thenReturn(items);
+        when(itemRepository.findAllByOwnerIdOrderById(anyInt(), any(Pageable.class))).thenReturn(items);
         when(bookingRepository.findAllByItemIdOrderByStart(anyInt())).thenReturn(List.of(booking));
         when(commentRepository.findAllByItemIdOrderByCreatedDesc(anyInt())).thenReturn(List.of(comment));
         Assertions.assertThat(itemService.getAllItemsUser(1, Pageable.unpaged())).isEqualTo(itemDtos);
@@ -169,7 +169,7 @@ public class ItemServiceTest {
         ItemRequest itemRequest = UtilsForTest.makeItemRequest(1, user);
         Item item1 = UtilsForTest.makeItem(1, true, user, itemRequest);
         Item item2 = UtilsForTest.makeItem(2, true, user, itemRequest);
-        List<Item> items = List.of(item1,item2);
+        List<Item> items = List.of(item1, item2);
 
         ItemDto itemDto1 = ItemMapper.toItemDto(item1);
         ItemDto itemDto2 = ItemMapper.toItemDto(item2);
